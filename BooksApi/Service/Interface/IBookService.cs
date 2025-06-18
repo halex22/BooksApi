@@ -5,7 +5,8 @@ namespace BooksApi.Service.Interface
     public interface IBookService
     {
         Task<IEnumerable<BookDTO>> GetAllBooks();
-        Task<IEnumerable<BookDTO>> GetBookByCategoryId(int categoryId);
-        Task<BookDTO> CreateBook(CreateBookDTO book);
+        Task<IEnumerable<BookDTO>> GetBooksByCategoryId(int categoryId);
+        Task<IEnumerable<BookDTO>> GetBooksByTitle(string title);
+        Task<BookDTO?> CreateBook(CreateBookDTO book);
     }
 }

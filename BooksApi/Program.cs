@@ -1,6 +1,8 @@
 using BooksApi.Service;
 using BooksApi.Service.Interface;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.OpenApi;
+using Microsoft.OpenApi.Models;
 
 namespace BooksApi
 {
@@ -13,6 +15,15 @@ namespace BooksApi
             builder.Services.AddDbContext<BooksContext>(options =>
             options.UseNpgsql(builder.Configuration.GetConnectionString("Default")));
 
+            builder.Services.AddSwaggerGen(options =>
+                options.SwaggerDoc("v3", new OpenApiInfo
+                {
+                    Title = "Identity API",
+                    Version = "v3",
+                    Description = "API for managing Users."
+                })
+            );
+
             builder.Services.AddScoped<ICategoryService, CategoryService>();
             builder.Services.AddScoped<IBookService, BookService>();
 
@@ -21,15 +32,21 @@ namespace BooksApi
             builder.Services.AddControllers();
 
             var app = builder.Build();
+            app.UseSwagger(c =>
+                c.OpenApiVersion = OpenApiSpecVersion.OpenApi3_0
+            );
+            app.UseSwaggerUI(c =>
+                c.SwaggerEndpoint("v3/swagger.json", "Identity API V1")
+            );
 
             // Configure the HTTP request pipeline.
 
-            builder.Services.AddCors(options =>
-                options.AddPolicy("AllowAllOrigins",
-                    builder => builder.AllowAnyOrigin()
-                                      .AllowAnyMethod()
-                                      .AllowAnyHeader())
-            );
+            //builder.Services.AddCors(options =>
+            //    options.AddPolicy("AllowAllOrigins",
+            //        builder => builder.AllowAnyOrigin()
+            //                          .AllowAnyMethod()
+            //                          .AllowAnyHeader())
+            //);
 
             app.UseAuthorization();
 

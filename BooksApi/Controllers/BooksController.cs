@@ -1,14 +1,15 @@
-﻿using System;
+﻿using BooksApi;
+using BooksApi.Model;
+using BooksApi.Model.DTOs;
+using BooksApi.Service.Interface;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using BooksApi;
-using BooksApi.Model;
-using BooksApi.Service.Interface;
-using BooksApi.Model.DTOs;
 
 namespace BooksApi.Controllers
 {
@@ -45,12 +46,21 @@ namespace BooksApi.Controllers
         //    return book;
         //}
 
-        // GET: api/Books/5
+        // GET: api/Books/by-category/{id}
         [HttpGet("by-category/{id}")]
         public async Task<IActionResult> GetBooksByCategoryId([FromRoute] int id)
         {
-            var books = await _bookService.GetBookByCategoryId(id);
+            var books = await _bookService.GetBooksByCategoryId(id);
             return Ok(books);
+        }
+
+        // GET: api/Books/by-title?title=
+        [HttpGet("by-title")]
+        public async Task<IActionResult> GetBooksByTitle([FromQuery] string title)
+        {
+            var result = await _bookService.GetBooksByTitle(title);
+            if (result == null || !result.Any()) return NotFound($"No books found with the specified title '{title}'");
+            return Ok(result);
         }
 
         //// PUT: api/Books/5
@@ -86,11 +96,13 @@ namespace BooksApi.Controllers
 
         // POST: api/Books
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        //[HttpPost]
-        //public async Task<ActionResult<Book>> PostBook([FromBody] CreateBookDTO book)
-        //{
-        //    var createdBook = _bookService.CreateBook(book);
-        //}
+        [HttpPost]
+        public async Task<IActionResult> PostBook([FromBody] CreateBookDTO book)
+        {
+            var createdBook = await _bookService.CreateBook(book);
+            if (createdBook != null) return BadRequest("Book could not be created, invalid data provided");
+            return CreatedAtAction("GetBook", createdBook);
+        }
 
         //// DELETE: api/Books/5
         //[HttpDelete("{id}")]
