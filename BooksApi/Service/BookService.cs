@@ -89,6 +89,9 @@ namespace BooksApi.Service
 
             var categoryId = await _context.Categories.FindAsync(bookToCreate.CategoryId);
             if (categoryId == null) return null;
+            {
+}
+            // return null here 
 
             // missing chek for PublishDate
 
@@ -117,6 +120,27 @@ namespace BooksApi.Service
                     Id = book.Category.Id,
                     Name = book.Category.Name
                 },
+            };
+        }
+
+        public async Task<BookDTO?> GetBookById(int id)
+        {
+            var book = await _context.Books.Include(b => b.Category).SingleOrDefaultAsync(b => b.Id == id);
+            if (book == null) throw new KeyNotFoundException($"No book with id {id} was found");
+
+            return new BookDTO
+            {
+                Id = book.Id,
+                Title = book.Title,
+                Img = book.Img,
+                Author = book.Author,
+                PublishDate = book.PublishDate,
+                IsAvailable = book.IsAvailable,
+                Category = new CategoryDTO
+                {
+                    Id = book.Category.Id,
+                    Name = book.Category.Name
+                }
             };
         }
     }

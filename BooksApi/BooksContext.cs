@@ -40,7 +40,7 @@ public partial class BooksContext : DbContext
                 .HasDefaultValue(true)
                 .HasColumnName("is_available");
             entity.Property(e => e.PublishDate)
-                .HasColumnType("timestamp without time zone")
+                .HasColumnType("date")
                 .HasColumnName("publish_date");
             entity.Property(e => e.Title)
                 .HasMaxLength(250)

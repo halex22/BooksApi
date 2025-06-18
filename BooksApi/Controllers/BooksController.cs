@@ -32,19 +32,13 @@ namespace BooksApi.Controllers
             return Ok(books);
         }
 
-        //// GET: api/Books/5
-        //[HttpGet("{id}")]
-        //public async Task<IActionResult> GetBook(int id)
-        //{
-        //    var book = await _context.Books.FindAsync(id);
-
-        //    if (book == null)
-        //    {
-        //        return NotFound();
-        //    }
-
-        //    return book;
-        //}
+        // GET: api/Books/5
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetBookByID([FromRoute]int id)
+        {
+            var book = await _bookService.GetBookById(id);
+            return CreatedAtAction("GetBookByID", new { Id = book?.Id }, book);
+        }
 
         // GET: api/Books/by-category/{id}
         [HttpGet("by-category/{id}")]
@@ -100,8 +94,8 @@ namespace BooksApi.Controllers
         public async Task<IActionResult> PostBook([FromBody] CreateBookDTO book)
         {
             var createdBook = await _bookService.CreateBook(book);
-            if (createdBook != null) return BadRequest("Book could not be created, invalid data provided");
-            return CreatedAtAction("GetBook", createdBook);
+            if (createdBook == null) return BadRequest("Book could not be created, invalid data provided");
+            return CreatedAtAction("GetBookByID", new {Id = createdBook.Id} , createdBook);
         }
 
         //// DELETE: api/Books/5
