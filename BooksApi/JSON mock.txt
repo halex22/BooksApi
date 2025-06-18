@@ -1,0 +1,59 @@
+JSON mock 
+
+book:
+	id
+	title
+	img
+	author
+	publish_date
+	category_id
+	is_available ???? 
+
+category:
+	id
+	name
+
+user:
+	id
+	name
+	last_name
+	dob
+
+rental
+	id
+	user_id
+	book_id
+	rental_date
+	return_date
+	
+
+JSON 
+[GET]
+** /api/books?filter=category_id
+/api/books
+array of
+{
+	id: number
+	title: string
+	img: string
+	author: string
+	publish_date: Datetime
+	category: {
+		id: number
+		name: string
+	}
+	is_available: bool
+}
+
+
+[POST]
+{
+	title: string
+	img: string
+	author: string
+	publish_date: Datetime
+	category_id
+}
+
+
+/api/categories/
